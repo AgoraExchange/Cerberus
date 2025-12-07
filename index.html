@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"
+/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>Cerberus — Nothing Passes Unseen</title>
+
+<style>
+/* =========================================================
+   CERBERUS — Systems Awareness Interface
+   Developed by AGORA
+   All in one file: HTML + CSS + JS
+   ========================================================= */
+
+/* ---------- Theme Tokens ---------- */
+:root {
+  --bg: #02030a;
+  --bg-accent1: #101428;
+  --bg-accent2: #050814;
+  --panel: rgba(10, 14, 30, 0.86);
+  --panel-soft: rgba(12, 18, 40, 0.72);
+  --panel-border: rgba(140, 180, 255, 0.2);
+  --panel-border-soft: rgba(255, 255, 255, 0.08);
+  --text-main: #f3f5ff;
+  --text-dim: #8e96aa;
+  --accent: #64ffda;
+  --accent-soft: rgba(100, 255, 218, 0.16);
+  --accent-strong: #38f5ff;
+  --danger: #ff5c7b;
+  --warning: #ffd56b;
+  --radius-lg: 22px;
+  --radius-md: 18px;
+  --radius-pill: 999px;
+  --blur-strong: blur(26px);
+  --blur-soft: blur(18px);
+  --shadow-panel: 0 20px 40px rgba(0, 0, 0, 0.6);
+  --shadow-soft: 0 14px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui,
+               -system-ui, sans-serif;
+  color: var(--text-main);
+}
+
+/* ---------- Background & Global Layout ---------- */
+body {
+  background-color: var(--bg);
+  overflow: hidden;
+}
+
+body::before {
+  /* Animated cyber gradient cloud */
+  content: "";
+  position: fixed;
+  inset: -20%;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(0, 255, 200, 0.16), transparent 55%),
+    radial-gradient(circle at 80% 20%, rgba(0, 170, 255, 0.22), transparent 60%),
+    radial-gradient(circle at 50% 100%, rgba(180, 50, 255, 0.2), transparent 55%);
+  opacity: 0.97;
+  filter: blur(10px);
+  animation: drift 32s infinite alternate ease-in-out;
+  z-index: -2;
+}
+
+body::after {
+  /* Subtle grid overlay */
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mix-blend-mode: soft-light;
+  opacity: 0.35;
+  z-index: -1;
+}
+
+@keyframes drift {
+  0%   { transform: translate3d(-2%, -1%, 0) scale(1); }
+  50%  { transform: translate3d(3%, 2%, 0) scale(1.03); }
+  100% { transform: translate3d(-1%, 4%, 0) scale(1.06); }
+}
+
+/* ---------- App Shell ---------- */
+#app {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Splash ---------- */
+#splash {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: radial-gradient(circle at top, #141a35, #02030a 60%, #000 100%);
+  color: var(--text-main);
+  z-index: 30;
+  transition: opacity 0.9s ease-out;
+}
+
+#splash-logo {
+  width: 96px;
+  height: 96px;
+  border-radius: 32px;
+  background: conic-gradient(
+    from 200deg,
+    #64ffda,
+    #38f5ff,
+    #a580ff,
+    #ff6fb4,
+    #64ffda
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 32px rgba(100, 255, 218, 0.55),
+    0 0 80px rgba(56, 245, 255, 0.5);
+}
+
+#splash-logo-inner {
+  width: 82px;
+  height: 82px;
+  border-radius: 28px;
+  background: radial-gradient(circle at top, #101320, #05060e);
+  border: 1px solid rgba(137, 205, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  letter-spacing: 0.18em;
+}
+
+#splash-title {
+  margin-top: 10px;
+  font-size: 20px;
+  letter-spacing: 0.24em;
+}
+
+#splash-tagline {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+#boot {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--accent-strong);
+}
+
+/* ---------- Header / Top Bar ---------- */
+header {
+  padding: calc(env(safe-area-inset-top) + 8px) 18px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.header-title {
+  font-size: 15px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #dbe3ff;
+}
+
+.header-subtitle {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.header-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  background: rgba(10, 180, 140, 0.08);
+  border: 1px solid rgba(100, 255, 218, 0.3);
+  box-shadow: 0 0 18px rgba(100, 255, 218, 0.35);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 14px rgba(100, 255, 218, 0.8);
+}
+
+/* ---------- Main & Views ---------- */
+main {
+  position: relative;
+  flex: 1;
+  padding: 4px 16px 110px;
+  overflow: hidden;
+}
+
+.view {
+  position: absolute;
+  inset: 0;
+  padding-top: 6px;
+  padding-bottom: 100px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(12px) scale(0.99);
+  transition: opacity 0.32s ease, transform 0.32s ease;
+}
+
+.view.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0) scale(1);
+}
+
+/* ---------- Panels ---------- */
+.panel {
+  background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.02),
+      rgba(255, 255, 255, 0)
+    ),
+    var(--panel);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--panel-border-soft);
+  padding: 14px 14px 12px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: var(--blur-soft);
+  position: relative;
+  overflow: hidden;
+}
+
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(100, 255, 218, 0.12), transparent 55%);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.panel-title {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.panel-chip {
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(140, 180, 255, 0.45);
+  background: rgba(12, 18, 40, 0.8);
+  color: rgba(194, 214, 255, 0.92);
+}
+
+/* ---------- Key/Value Rows ---------- */
+.kv-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin: 5px 0;
+  font-size: 13px;
+}
+
+.kv-label {
+  color: var(--text-dim);
+}
+
+.kv-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  color: var(--accent);
+  font-size: 13px;
+}
+
+/* ---------- Grid Layout for Panels ---------- */
+.grid-1-2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 14px;
+}
+
+@media (max-width: 720px) {
+  .grid-1-2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------- Rings / Performance ---------- */
+.rings {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.ring {
+  flex: 1;
+  text-align: center;
+}
+
+.ring svg {
+  width: 90px;
+  height: 90px;
+}
+
+.ring circle {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+.ring .bg {
+  stroke: rgba(255, 255, 255, 0.09);
+}
+
+.ring .meter {
+  stroke: url(#ringGradient);
+  stroke-dasharray: 251;
+  stroke-dashoffset: 251;
+  filter: drop-shadow(0 0 8px rgba(100, 255, 218, 0.6));
+  transition: stroke-dashoffset 0.7s cubic-bezier(.19,.84,.44,1);
+}
+
+.ring-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.ring-value {
+  margin-top: 2px;
+  font-size: 13px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
+}
+
+/* ---------- Session Timeline ---------- */
+.timeline {
+  position: relative;
+  margin-top: 8px;
+  height: 5px;
+  border-radius: 999px;
+  background: radial-gradient(circle at left, rgba(100, 255, 218, 0.3), rgba(12, 18, 40, 0.2));
+  overflow: hidden;
+}
+
+.timeline-bar {
+  position: absolute;
+  inset: 0;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong), #a580ff);
+  box-shadow: 0 0 16px rgba(100, 255, 218, 0.6);
+  transition: width 1s linear;
+}
+
+/* ---------- Gatekeeper IP Box ---------- */
+.code-chip {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(130, 190, 255, 0.45);
+  background: radial-gradient(circle at top left, rgba(49, 98, 255, 0.4), rgba(7, 12, 35, 0.9));
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
+  color: #e7f0ff;
+  box-shadow: 0 14px 28px rgba(8, 16, 40, 0.95);
+}
+
+/* ---------- Telemetry Pulse ---------- */
+.pulse-value {
+  font-size: 18px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
+  letter-spacing: 0.18em;
+}
+
+/* ---------- Bottom Nav ---------- */
+nav {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 0 18px calc(env(safe-area-inset-bottom) + 14px);
+  display: flex;
+  justify-content: center;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.nav-shell {
+  pointer-events: auto;
+  flex: 1;
+  max-width: 430px;
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 999px;
+  background: rgba(5, 9, 20, 0.88);
+  border: 1px solid rgba(120, 170, 255, 0.4);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.88),
+    0 0 22px rgba(100, 255, 218, 0.3);
+  backdrop-filter: var(--blur-strong);
+}
+
+.nav-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+  padding: 7px 8px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--text-dim);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-btn-icon {
+  font-size: 15px;
+}
+
+.nav-btn.active {
+  color: var(--accent);
+  background: radial-gradient(circle at top, rgba(100, 255, 218, 0.22), rgba(4, 8, 20, 0.8));
+  box-shadow:
+    0 0 12px rgba(100, 255, 218, 0.7),
+    0 0 40px rgba(56, 245, 255, 0.7);
+}
+
+.nav-btn.active::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(100,255,218,0.4), rgba(56,245,255,0.3), transparent 60%);
+  opacity: 0.55;
+  mix-blend-mode: screen;
+}
+
+/* ---------- Footer (Gatekeeper) ---------- */
+footer {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 11px;
+  color: rgba(180, 194, 230, 0.9);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ---------- Desktop polish ---------- */
+@media (min-width: 900px) {
+  main {
+    max-width: 960px;
+    margin-inline: auto;
+  }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Splash -------------------------------------------------->
+  <div id="splash">
+    <div id="splash-logo">
+      <div id="splash-logo-inner">C</div>
+    </div>
+    <div id="splash-title">CERBERUS</div>
+    <div id="splash-tagline">NOTHING PASSES UNSEEN</div>
+    <div id="boot">Establishing Watchdog…</div>
+  </div>
+
+  <!-- Top Bar ------------------------------------------------->
+  <header>
+    <div class="header-main">
+      <div class="header-title">AGORA • SYSTEMS DIVISION</div>
+      <div class="header-subtitle">Cerberus — System Awareness Interface</div>
+    </div>
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Guarding</span>
+    </div>
+  </header>
+
+  <!-- Main Views --------------------------------------------->
+  <main>
+    <!-- HEAD I — Watchdog -->
+    <section class="view active" id="watchdog">
+      <div class="grid-1-2">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Head I • Watchdog</div>
+            <div class="panel-chip">Device Envelope</div>
+          </div>
+          <div class="kv-row">
+            <span class="kv-label">Resolution</span>
+            <span class="kv-value" id="res"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-label">Viewport</span>
+            <span class="kv-value" id="vp"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-label">Pixel Ratio</span>
+            <span class="kv-value" id="dpr"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-label">Orientation</span>
+            <span class="kv-value" id="orient"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-label">Theme</span>
+            <span class="kv-value" id="theme"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-label">Status</span>
+            <span class="kv-value" id="online"></span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Locale & Time</div>
+            <div class="panel-chip">Signal Context</div>
+          </div>
+          <div class="kv-row">
+            <span class="kv-label">Timezone</span>
+            <span class="kv-value" id="tz"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-label">Language</span>
+            <span class="kv-value" id="lang"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-label">Local Time</span>
+            <span class="kv-value" id="clock"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HEAD II — Sentinel -->
+    <section class="view" id="sentinel">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Head II • Sentinel</div>
+          <div class="panel-chip">Performance Vector</div>
+        </div>
+
+        <!-- SVG gradient definition (once, reused by all meters) -->
+        <svg width="0" height="0" style="position:absolute">
+          <defs>
+            <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#64ffda"/>
+              <stop offset="40%" stop-color="#38f5ff"/>
+              <stop offset="80%" stop-color="#a580ff"/>
+              <stop offset="100%" stop-color="#ff6fb4"/>
+            </linearGradient>
+          </defs>
+        </svg>
+
+        <div class="rings">
+          <div class="ring">
+            <svg viewBox="0 0 90 90">
+              <circle class="bg" r="40" cx="45" cy="45"></circle>
+              <circle class="meter" r="40" cx="45" cy="45"></circle>
+            </svg>
+            <div class="ring-label">CPU LOAD</div>
+            <div class="ring-value" data-ring-label>--%</div>
+          </div>
+
+          <div class="ring">
+            <svg viewBox="0 0 90 90">
+              <circle class="bg" r="40" cx="45" cy="45"></circle>
+              <circle class="meter" r="40" cx="45" cy="45"></circle>
+            </svg>
+            <div class="ring-label">MEMORY</div>
+            <div class="ring-value" data-ring-label>--%</div>
+          </div>
+
+          <div class="ring">
+            <svg viewBox="0 0 90 90">
+              <circle class="bg" r="40" cx="45" cy="45"></circle>
+              <circle class="meter" r="40" cx="45" cy="45"></circle>
+            </svg>
+            <div class="ring-label">ACTIVITY</div>
+            <div class="ring-value" data-ring-label>--%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Session Telemetry</div>
+          <div class="panel-chip">Operator Presence</div>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Uptime</span>
+          <span class="kv-value" id="uptime"></span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Visibility</span>
+          <span class="kv-value" id="vis"></span>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-bar" id="timeline-bar"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HEAD III — Gatekeeper -->
+    <section class="view" id="gatekeeper">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Head III • Gatekeeper</div>
+          <div class="panel-chip">Network Surface</div>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Connection</span>
+          <span class="kv-value" id="net"></span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Latency (sim)</span>
+          <span class="kv-value" id="ping"></span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Public IP</span>
+          <span class="kv-value" id="ip">Fetching…</span>
+        </div>
+
+        <div class="code-chip" id="ip-code-chip">
+          {/* awaiting link from upstream… */}
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Randomized Pulse</div>
+          <div class="panel-chip">Entropy Stream</div>
+        </div>
+        <div class="pulse-value" id="pulse">------</div>
+      </div>
+
+      <footer>Developed by AGORA • CERBERUS</footer>
+    </section>
+  </main>
+
+  <!-- Thumb Nav ------------------------------------------------>
+  <nav>
+    <div class="nav-shell">
+      <button class="nav-btn active" data-view="watchdog">
+        <div class="nav-btn-icon">👁‍🗨</div>
+        <div>Watchdog</div>
+      </button>
+      <button class="nav-btn" data-view="sentinel">
+        <div class="nav-btn-icon">📊</div>
+        <div>Sentinel</div>
+      </button>
+      <button class="nav-btn" data-view="gatekeeper">
+        <div class="nav-btn-icon">🌐</div>
+        <div>Gatekeeper</div>
+      </button>
+    </div>
+  </nav>
+</div>
+
+<script>
+/* =========================================================
+   CERBERUS — Behavior & Telemetry
+   ========================================================= */
+
+const $ = (id) => document.getElementById(id);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+/* ---------- Splash Boot Sequence ---------- */
+setTimeout(() => { $('boot').textContent = 'Synchronizing Heads…'; }, 800);
+setTimeout(() => { $('boot').textContent = 'System Awareness Online'; }, 1600);
+setTimeout(() => { $('splash').style.opacity = '0'; }, 2400);
+setTimeout(() => { $('splash')?.remove(); }, 3400);
+
+/* ---------- Navigation ---------- */
+const views = $$('.view');
+const navButtons = $$('.nav-btn');
+
+navButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.view;
+    navButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    views.forEach(v => v.classList.toggle('active', v.id === target));
+  });
+});
+
+/* ---------- Watchdog (Device & Locale) ---------- */
+function updateWatchdog() {
+  $('res').textContent = `${screen.width}×${screen.height}`;
+  $('vp').textContent = `${window.innerWidth}×${window.innerHeight}`;
+  $('dpr').textContent = window.devicePixelRatio.toFixed(2);
+  $('orient').textContent = (screen.orientation && screen.orientation.type) || (window.innerWidth > window.innerHeight ? 'landscape' : 'portrait');
+  $('theme').textContent = matchMedia('(prefers-color-scheme: dark)').matches ? 'Dark' : 'Light';
+  $('online').textContent = navigator.onLine ? 'Online' : 'Offline';
+
+  try {
+    const opts = Intl.DateTimeFormat().resolvedOptions();
+    $('tz').textContent = opts.timeZone || 'Unknown';
+  } catch {
+    $('tz').textContent = 'Unknown';
+  }
+
+  $('lang').textContent = navigator.language || 'Unknown';
+}
+updateWatchdog();
+window.addEventListener('resize', updateWatchdog);
+window.addEventListener('online', updateWatchdog);
+window.addEventListener('offline', updateWatchdog);
+
+setInterval(() => {
+  $('clock').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}, 1000);
+
+/* ---------- Sentinel (Rings + Session) ---------- */
+const ringMeters = $$('.ring .meter');
+const ringValues = $$('[data-ring-label]');
+const timelineBar = $('timeline-bar');
+const sessionStart = performance.now();
+
+function setRing(ringIdx, value) {
+  const clamped = Math.max(0, Math.min(100, value));
+  const offset = 251 - (clamped / 100) * 251;
+  ringMeters[ringIdx].style.strokeDashoffset = offset;
+  ringValues[ringIdx].textContent = `${Math.round(clamped)}%`;
+}
+
+function randomVariance(base, spread) {
+  return base + (Math.random() - 0.5) * spread * 2;
+}
+
+// update “pseudo” metrics
+setInterval(() => {
+  setRing(0, randomVariance(52, 20)); // CPU-ish
+  setRing(1, randomVariance(61, 15)); // memory-ish
+  setRing(2, randomVariance(48, 30)); // activity-ish
+}, 1400);
+
+// uptime + visibility + session timeline
+setInterval(() => {
+  const seconds = Math.floor((performance.now() - sessionStart) / 1000);
+  const min = Math.floor(seconds / 60);
+  const sec = seconds % 60;
+  $('uptime').textContent = `${min}m ${sec.toString().padStart(2, '0')}s`;
+  $('vis').textContent = document.hidden ? 'Hidden' : 'Visible';
+
+  // timeline fills over 15 minutes and then idles at 100%
+  const maxSession = 15 * 60;
+  const pct = Math.min(100, (seconds / maxSession) * 100);
+  timelineBar.style.width = pct + '%';
+}, 1000);
+
+/* ---------- Gatekeeper (Network + IP + Pulse) ---------- */
+$('net').textContent =
+  (navigator.connection && (navigator.connection.effectiveType || navigator.connection.type)) ||
+  'Unknown';
+
+function updateLatency() {
+  const latency = Math.floor(18 + Math.random() * 70);
+  $('ping').textContent = `${latency} ms`;
+}
+updateLatency();
+setInterval(updateLatency, 1300);
+
+function updatePulse() {
+  $('pulse').textContent = Math.random().toString(36).slice(2, 8).toUpperCase();
+}
+updatePulse();
+setInterval(updatePulse, 900);
+
+// Public IP from free API
+fetch('https://api.ipify.org?format=json')
+  .then(r => r.json())
+  .then(data => {
+    $('ip').textContent = data.ip || 'Unavailable';
+    $('ip-code-chip').textContent = `upstream.public_ip = "${data.ip}"`;
+  })
+  .catch(() => {
+    $('ip').textContent = 'Unavailable';
+    $('ip-code-chip').textContent = '// upstream link unavailable';
+  });
+</script>
+</body>
+</html>
