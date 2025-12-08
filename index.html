@@ -417,6 +417,115 @@ main {
   letter-spacing: 0.18em;
 }
 
+/* ---------- Signal Masking (Virtual Location & VPN UI) ---------- */
+.mask-select {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(150, 190, 255, 0.6);
+  background: rgba(5, 10, 30, 0.9);
+  color: #dfe7ff;
+  outline: none;
+  appearance: none;
+}
+
+.mask-select:focus {
+  box-shadow: 0 0 0 1px rgba(100, 255, 218, 0.7);
+}
+
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.pill-toggle {
+  font-size: 11px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(130, 170, 255, 0.5);
+  background: rgba(8, 12, 32, 0.9);
+  color: rgba(199, 214, 255, 0.9);
+  cursor: pointer;
+  user-select: none;
+  transition: 0.18s ease;
+}
+
+.pill-toggle.active {
+  border-color: var(--accent);
+  background: radial-gradient(circle at top, rgba(100, 255, 218, 0.22), rgba(5, 12, 30, 0.98));
+  color: var(--accent);
+  box-shadow: 0 0 12px rgba(100, 255, 218, 0.7);
+}
+
+/* Toggle switches */
+.toggle-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(6, 10, 26, 0.95);
+  border: 1px solid rgba(120, 150, 220, 0.7);
+  font-size: 11px;
+  cursor: pointer;
+  user-select: none;
+  transition: 0.18s ease;
+}
+
+.toggle-knob {
+  width: 24px;
+  height: 13px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.65);
+  position: relative;
+}
+
+.toggle-knob::after {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  background: rgba(210, 220, 255, 0.9);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+  transition: 0.18s ease;
+}
+
+.toggle.active {
+  border-color: var(--accent);
+  background: rgba(6, 34, 30, 0.95);
+  color: var(--accent);
+  box-shadow: 0 0 14px rgba(100, 255, 218, 0.65);
+}
+
+.toggle.active .toggle-knob {
+  background: rgba(10, 60, 50, 0.9);
+}
+
+.toggle.active .toggle-knob::after {
+  transform: translateX(11px);
+  background: #64ffda;
+  box-shadow: 0 0 10px rgba(100, 255, 218, 0.9);
+}
+
+.mask-summary {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
 /* ---------- Bottom Nav ---------- */
 nav {
   position: fixed;
@@ -677,7 +786,62 @@ footer {
         </div>
 
         <div class="code-chip" id="ip-code-chip">
-          {/* awaiting link from upstream… */}
+          <!-- awaiting link from upstream… -->
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Signal Masking Suite</div>
+          <div class="panel-chip">Virtual Profiles</div>
+        </div>
+
+        <div class="kv-row">
+          <span class="kv-label">Virtual Location</span>
+          <span class="kv-value">
+            <select id="mask-location" class="mask-select">
+              <option value="real">Real Device Signal</option>
+              <option value="sf">San Francisco, US</option>
+              <option value="nyc">New York, US</option>
+              <option value="ldn">London, UK</option>
+              <option value="ber">Berlin, DE</option>
+              <option value="tok">Tokyo, JP</option>
+              <option value="rnd">Rotating Global Route</option>
+            </select>
+          </span>
+        </div>
+
+        <div class="kv-row">
+          <span class="kv-label">App Targets</span>
+          <span class="kv-value">
+            <!-- rendered as pills underneath -->
+          </span>
+        </div>
+        <div class="pill-row" id="mask-apps">
+          <div class="pill-toggle" data-app="life360">Life360</div>
+          <div class="pill-toggle" data-app="findmy">Find My</div>
+          <div class="pill-toggle" data-app="snapmap">Snap Map</div>
+          <div class="pill-toggle" data-app="maps">Maps / Nav</div>
+          <div class="pill-toggle" data-app="locationapis">Location APIs</div>
+        </div>
+
+        <div class="toggle-row" id="mask-toggles">
+          <div class="toggle" data-toggle="vpn">
+            <div class="toggle-knob"></div>
+            <span>VPN Tunnel</span>
+          </div>
+          <div class="toggle" data-toggle="socks5">
+            <div class="toggle-knob"></div>
+            <span>SOCKS5 Route</span>
+          </div>
+          <div class="toggle" data-toggle="tor">
+            <div class="toggle-knob"></div>
+            <span>Tor Layer</span>
+          </div>
+        </div>
+
+        <div class="mask-summary" id="mask-summary">
+          Profile: Real device signal • No masking applied.
         </div>
       </div>
 
@@ -744,7 +908,9 @@ function updateWatchdog() {
   $('res').textContent = `${screen.width}×${screen.height}`;
   $('vp').textContent = `${window.innerWidth}×${window.innerHeight}`;
   $('dpr').textContent = window.devicePixelRatio.toFixed(2);
-  $('orient').textContent = (screen.orientation && screen.orientation.type) || (window.innerWidth > window.innerHeight ? 'landscape' : 'portrait');
+  $('orient').textContent =
+    (screen.orientation && screen.orientation.type) ||
+    (window.innerWidth > window.innerHeight ? 'landscape' : 'portrait');
   $('theme').textContent = matchMedia('(prefers-color-scheme: dark)').matches ? 'Dark' : 'Light';
   $('online').textContent = navigator.onLine ? 'Online' : 'Offline';
 
@@ -763,7 +929,11 @@ window.addEventListener('online', updateWatchdog);
 window.addEventListener('offline', updateWatchdog);
 
 setInterval(() => {
-  $('clock').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  $('clock').textContent = new Date().toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
 }, 1000);
 
 /* ---------- Sentinel (Rings + Session) ---------- */
@@ -833,6 +1003,122 @@ fetch('https://api.ipify.org?format=json')
     $('ip').textContent = 'Unavailable';
     $('ip-code-chip').textContent = '// upstream link unavailable';
   });
+
+/* ---------- Signal Masking Suite (UI-only) ---------- */
+const maskLocationSelect = $('mask-location');
+const maskAppsRow = $('mask-apps');
+const maskSummary = $('mask-summary');
+const maskTogglesRow = $('mask-toggles');
+
+const MASK_STORAGE_KEY = 'cerberusMaskConfig';
+
+function readMaskState() {
+  try {
+    const saved = localStorage.getItem(MASK_STORAGE_KEY);
+    if (!saved) return null;
+    return JSON.parse(saved);
+  } catch {
+    return null;
+  }
+}
+
+function writeMaskState(state) {
+  try {
+    localStorage.setItem(MASK_STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // ignore quota / private mode
+  }
+}
+
+function computeMaskSummary() {
+  const state = {
+    location: maskLocationSelect.value,
+    apps: $$('[data-app].active', maskAppsRow).map(el => el.dataset.app),
+    toggles: $$('[data-toggle].active', maskTogglesRow).map(el => el.dataset.toggle)
+  };
+  writeMaskState(state);
+
+  const locationMap = {
+    real: 'Real device signal',
+    sf: 'San Francisco, US',
+    nyc: 'New York, US',
+    ldn: 'London, UK',
+    ber: 'Berlin, DE',
+    tok: 'Tokyo, JP',
+    rnd: 'Rotating global route'
+  };
+
+  const appLabelMap = {
+    life360: 'Life360',
+    findmy: 'Find My',
+    snapmap: 'Snap Map',
+    maps: 'Maps / Nav',
+    locationapis: 'Location APIs'
+  };
+
+  const toggleLabelMap = {
+    vpn: 'VPN tunnel',
+    socks5: 'SOCKS5 route',
+    tor: 'Tor layer'
+  };
+
+  const locLabel = locationMap[state.location] || 'Custom route';
+  const apps = state.apps.map(a => appLabelMap[a] || a);
+  const toggles = state.toggles.map(t => toggleLabelMap[t] || t);
+
+  let text = `Profile: ${locLabel}`;
+  if (!apps.length && !toggles.length && state.location === 'real') {
+    text += ' • No masking applied.';
+  } else {
+    if (apps.length) {
+      text += ` • Targets: ${apps.join(', ')}`;
+    }
+    if (toggles.length) {
+      text += ` • Stack: ${toggles.join(' + ')}`;
+    }
+  }
+  maskSummary.textContent = text;
+}
+
+// Restore previous state if any
+(function hydrateMaskState() {
+  const state = readMaskState();
+  if (!state) {
+    computeMaskSummary();
+    return;
+  }
+  if (state.location) {
+    maskLocationSelect.value = state.location;
+  }
+  if (Array.isArray(state.apps)) {
+    $$('[data-app]', maskAppsRow).forEach(el => {
+      el.classList.toggle('active', state.apps.includes(el.dataset.app));
+    });
+  }
+  if (Array.isArray(state.toggles)) {
+    $$('[data-toggle]', maskTogglesRow).forEach(el => {
+      el.classList.toggle('active', state.toggles.includes(el.dataset.toggle));
+    });
+  }
+  computeMaskSummary();
+})();
+
+// Listeners
+maskLocationSelect.addEventListener('change', computeMaskSummary);
+
+$$('[data-app]', maskAppsRow).forEach(el => {
+  el.addEventListener('click', () => {
+    el.classList.toggle('active');
+    computeMaskSummary();
+  });
+});
+
+$$('[data-toggle]', maskTogglesRow).forEach(el => {
+  el.addEventListener('click', () => {
+    el.classList.toggle('active');
+    computeMaskSummary();
+  });
+});
 </script>
 </body>
 </html>
